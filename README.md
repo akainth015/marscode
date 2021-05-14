@@ -21,6 +21,9 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 1.2.0
+Add the "Run with Bitmap Display" command.
+
 ### 1.1.0
 Add the "Inject MARS command" command. That one's a mouthful.
 
