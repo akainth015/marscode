@@ -31,10 +31,53 @@ export function activate(context: vscode.ExtensionContext) {
 			const writeEmitter = new vscode.EventEmitter<string>();
 
 			let marsProc: ChildProcess;
+
 			const pty: vscode.Pseudoterminal = {
 				onDidWrite: writeEmitter.event,
 				open: () => {
 					marsProc = exec(`java -cp "${marsJar}" Mars "${filePath}"`);
+					marsProc.stdout?.on("data", (data: string) => {
+						writeEmitter.fire(data.replace(/\r\n|\r|\n/g, "\r\n"));
+					});
+					marsProc.stderr?.on("data", (data: string) => {
+						writeEmitter.fire(data);
+					});
+					marsProc.on("close", (code) => {
+						writeEmitter.fire(`Your program finished running. IDE exited with exit code ${code}.\r\n`);
+					});
+					marsProc.on("error", console.error);
+				},
+				close: () => {
+					marsProc.kill();
+				},
+				handleInput(data) {
+					if (marsProc.exitCode === null) {
+						writeEmitter.fire(data.replace(/\r\n|\r|\n/g, "\r\n"));
+						marsProc.stdin?.write(data);
+					}
+				}
+			};
+			const terminal = vscode.window.createTerminal({ name: 'MARS', pty });
+			terminal.show();
+		}),
+		vscode.commands.registerCommand('marscode.runWithBitmap', () => {
+			const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
+			if (filePath === undefined) {
+				return;
+			}
+
+			const marsJar =
+				vscode.workspace.getConfiguration().get("marscode.marsJAR") as string
+				|| vscode.extensions.getExtension("akainth015.marscode")!!.extensionPath + sep + "mars-4.5.jar";
+
+			const writeEmitter = new vscode.EventEmitter<string>();
+
+			let marsProc: ChildProcess;
+
+			const pty: vscode.Pseudoterminal = {
+				onDidWrite: writeEmitter.event,
+				open: () => {
+					marsProc = exec(`java -cp "${marsJar}" mars.tools.BitmapDisplay "${filePath}"`);
 					marsProc.stdout?.on("data", (data: string) => {
 						writeEmitter.fire(data.replace(/\r\n|\r|\n/g, "\r\n"));
 					});

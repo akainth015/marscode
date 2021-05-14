@@ -22,11 +22,15 @@
     "commands": [
       {
         "command": "marscode.assembleAndRun",
-        "title": "Assemble And Run"
+        "title": "MARS: Assemble And Run"
       },
       {
         "command": "marscode.termInject",
-        "title": "Inject MARS command"
+        "title": "MARS: Inject MARS command"
+      },
+      {
+        "command": "marscode.runWithBitmap",
+        "title": "MARS: Run with Bitmap Display"
       }
     ],
     "configuration":[
