@@ -21,6 +21,9 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 1.2.2
+Add a newline before the program end log to be more consistent with MARS behavior
+
 ### 1.2.0
 Add the "Run with Bitmap Display" command.
 
